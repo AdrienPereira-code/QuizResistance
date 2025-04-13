@@ -14,21 +14,28 @@
     #feedback { font-weight: bold; margin-top: 1em; }
     #mode-toggle { margin-bottom: 1em; padding: 0.5em 1em; border: none; background: #6c757d; color: white; border-radius: 5px; cursor: pointer; }
     input[type="text"] { padding: 0.5em; width: 60%; margin-top: 1em; }
+    #revision-list { display: none; text-align: left; margin-top: 2em; max-height: 400px; overflow-y: auto; }
+    #revision-list h3 { margin-top: 1em; color: #333; border-bottom: 1px solid #ccc; padding-bottom: 0.3em; }
+    #revision-list ul { list-style: none; padding-left: 0; }
+    #revision-list li { margin: 0.25em 0; }
   </style>
 </head>
 <body>
   <div id="quiz-container">
     <button id="mode-toggle">Passer en mode Entrée libre</button>
+    <button id="revision-toggle">Afficher le mode Révision</button>
     <h2 id="question"></h2>
     <div id="answers"></div>
     <input type="text" id="text-answer" style="display:none" placeholder="Entrez la plage de watts..." />
     <button id="submit-btn" style="display:none">Valider</button>
     <div id="feedback"></div>
     <p id="score"></p>
+
+    <div id="revision-list"></div>
   </div>
 
   <script>
-   const questions = [
+    const questions = [
       { brand: "Aspire Nautilus", ohm: "1.8", watt: "10 à 14 watts" },
       { brand: "Aspire Nautilus", ohm: "1.0 Mesh", watt: "13 à 15 watts" },
       { brand: "Aspire Nautilus", ohm: "0.7", watt: "18 à 23 watts" },
@@ -74,9 +81,8 @@
       { brand: "Aspire BP", ohm: "0.3", watt: "30 à 40 watts" },
       { brand: "Aspire BP", ohm: "0.17", watt: "45 à 55 watts" },
       { brand: "Aspire BP", ohm: "0.15", watt: "60 à 80 watts" },
-      { brand: "Aspire BP", ohm: "0.15 pro", watt: "80 à 100 watts" },
+      { brand: "Aspire BP", ohm: "0.15 pro", watt: "80 à 100 watts" }
     ];
-
 
     let currentQuestion;
     let score = 0;
@@ -90,11 +96,18 @@
     const modeToggle = document.getElementById("mode-toggle");
     const textAnswer = document.getElementById("text-answer");
     const submitBtn = document.getElementById("submit-btn");
+    const revisionToggle = document.getElementById("revision-toggle");
+    const revisionList = document.getElementById("revision-list");
 
     modeToggle.addEventListener("click", () => {
       freeMode = !freeMode;
       modeToggle.textContent = freeMode ? "Passer en mode QCM" : "Passer en mode Entrée libre";
       loadQuestion();
+    });
+
+    revisionToggle.addEventListener("click", () => {
+      revisionList.style.display = revisionList.style.display === "none" ? "block" : "none";
+      loadRevisionList();
     });
 
     function shuffle(array) {
@@ -108,7 +121,7 @@
       answersEl.innerHTML = freeMode ? "" : "";
 
       currentQuestion = questions[Math.floor(Math.random() * questions.length)];
-      questionEl.textContent = Quelle est la plage de watts pour une résistance ${currentQuestion.ohm} de chez ${currentQuestion.brand} ?;
+      questionEl.textContent = `Quelle est la plage de watts pour une résistance ${currentQuestion.ohm} de chez ${currentQuestion.brand} ?`;
 
       if (!freeMode) {
         const options = [currentQuestion.watt];
@@ -128,10 +141,10 @@
 
     function checkAnswer(answer) {
       const isCorrect = answer.toLowerCase().trim() === currentQuestion.watt.toLowerCase().trim();
-      feedbackEl.textContent = isCorrect ? "✅ Bonne réponse !" : ❌ Mauvais. Réponse attendue : ${currentQuestion.watt};
+      feedbackEl.textContent = isCorrect ? "✅ Bonne réponse !" : `❌ Mauvais. Réponse attendue : ${currentQuestion.watt}`;
       if (isCorrect) score++;
       total++;
-      scoreEl.textContent = Score : ${score}/${total};
+      scoreEl.textContent = `Score : ${score}/${total}`;
       setTimeout(loadQuestion, 2000);
     }
 
@@ -140,10 +153,17 @@
       textAnswer.value = "";
     });
 
+    function loadRevisionList() {
+      revisionList.innerHTML = "";
+      const orderedQuestions = questions.slice().sort((a, b) => a.watt.localeCompare(b.watt));
+      orderedQuestions.forEach((q) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = `${q.brand} (${q.ohm}): ${q.watt}`;
+        revisionList.appendChild(listItem);
+      });
+    }
+
     loadQuestion();
   </script>
-</body>
-</html>
-
 </body>
 </html>

@@ -63,7 +63,7 @@
       { brand: "Vaporesso GTi", ohm: "0.2", watt: "60 à 75 watts" },
       { brand: "Vaporesso GTi", ohm: "0.15", watt: "75 à 90 watts" },
       { brand: "Geekvape Z", ohm: "0.4", watt: "50 à 60 watts" },
-      { brand: "Geekvape Z", ohm: "0.15XM", watt: "70 à 85 watts" },
+      { brand: "Geekvape Z", ohm: "0.15XM", watt: "80 à 90 watts" },
       { brand: "Geekvape B", ohm: "1.2", watt: "10 à 14 watts" },
       { brand: "Geekvape B", ohm: "0.6", watt: "15 à 25 watts" },
       { brand: "Geekvape B", ohm: "0.4", watt: "25 à 35 watts" },
@@ -97,6 +97,7 @@
           .filter((value, index, self) => self.indexOf(value) === index)
       ).slice(0, 3);
 
+      // Ajoute la bonne réponse
       const choices = shuffle([correctWatt, ...incorrectWattages]);
 
       // Affichage

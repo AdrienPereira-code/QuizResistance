@@ -1,55 +1,34 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz Vape - Résistances</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Résistances</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      color: #333;
-      text-align: center;
-      padding: 20px;
-    }
-    h1 {
-      color: #4CAF50;
-    }
-    .question {
-      margin: 20px 0;
-      font-size: 18px;
-    }
-    .answer-btn {
-      display: inline-block;
-      margin: 10px;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .answer-btn:hover {
-      background-color: #0056b3;
-    }
-    .score {
-      font-size: 18px;
-      margin-top: 20px;
-    }
+    body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f4; padding: 2em; }
+    #quiz-container { background: white; padding: 2em; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+    .answer-btn, #submit-btn { margin: 0.5em; padding: 0.75em 1.5em; border: none; border-radius: 5px; background: #007bff; color: white; cursor: pointer; }
+    .answer-btn:hover, #submit-btn:hover { background: #0056b3; }
+    .answer-btn.correct { background: #28a745; }
+    .answer-btn.wrong { background: #dc3545; }
+    #feedback { font-weight: bold; margin-top: 1em; }
+    #mode-toggle { margin-bottom: 1em; padding: 0.5em 1em; border: none; background: #6c757d; color: white; border-radius: 5px; cursor: pointer; }
+    input[type="text"] { padding: 0.5em; width: 60%; margin-top: 1em; }
   </style>
 </head>
 <body>
-
-  <h1>Quiz Vape - Résistances</h1>
-
-  <div id="question" class="question"></div>
-
-  <div id="answers"></div>
-
-  <div id="score" class="score">Score : 0</div>
+  <div id="quiz-container">
+    <button id="mode-toggle">Passer en mode Entrée libre</button>
+    <h2 id="question"></h2>
+    <div id="answers"></div>
+    <input type="text" id="text-answer" style="display:none" placeholder="Entrez la plage de watts..." />
+    <button id="submit-btn" style="display:none">Valider</button>
+    <div id="feedback"></div>
+    <p id="score"></p>
+  </div>
 
   <script>
-    const questions = [
+   const questions = [
       { brand: "Aspire Nautilus", ohm: "1.8", watt: "10 à 14 watts" },
       { brand: "Aspire Nautilus", ohm: "1.0", watt: "13 à 15 watts en mesh" },
       { brand: "Aspire Nautilus", ohm: "0.7", watt: "18 à 23 watts" },
@@ -98,59 +77,73 @@
       { brand: "Aspire BP", ohm: "0.15 pro", watt: "80 à 100 watts" },
     ];
 
+
+    let currentQuestion;
     let score = 0;
+    let total = 0;
+    let freeMode = false;
+
+    const questionEl = document.getElementById("question");
+    const answersEl = document.getElementById("answers");
+    const feedbackEl = document.getElementById("feedback");
+    const scoreEl = document.getElementById("score");
+    const modeToggle = document.getElementById("mode-toggle");
+    const textAnswer = document.getElementById("text-answer");
+    const submitBtn = document.getElementById("submit-btn");
+
+    modeToggle.addEventListener("click", () => {
+      freeMode = !freeMode;
+      modeToggle.textContent = freeMode ? "Passer en mode QCM" : "Passer en mode Entrée libre";
+      loadQuestion();
+    });
 
     function shuffle(array) {
       return array.sort(() => Math.random() - 0.5);
     }
 
-    function generateQuestion() {
-      const question = questions[Math.floor(Math.random() * questions.length)];
-      const correctWatt = question.watt;
+    function loadQuestion() {
+      feedbackEl.textContent = "";
+      textAnswer.style.display = freeMode ? "inline-block" : "none";
+      submitBtn.style.display = freeMode ? "inline-block" : "none";
+      answersEl.innerHTML = freeMode ? "" : "";
 
-      // Créer des réponses uniques
-      const incorrectWattages = shuffle(
-        questions
-          .filter(q => q.watt !== correctWatt)
-          .map(q => q.watt)
-          .filter((value, index, self) => self.indexOf(value) === index)
-      ).slice(0, 3);
+      currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+      questionEl.textContent = `Quelle est la plage de watts pour une résistance ${currentQuestion.ohm} de chez ${currentQuestion.brand} ?`;
 
-      // Ajoute la bonne réponse
-      const choices = shuffle([correctWatt, ...incorrectWattages]);
-
-      // Affichage
-      document.getElementById("question").innerHTML = `
-        <strong>Marque :</strong> ${question.brand}<br>
-        <strong>Résistance :</strong> ${question.ohm} ohm<br>
-        Quelle est la bonne plage de puissance ?
-      `;
-
-      const answersContainer = document.getElementById("answers");
-      answersContainer.innerHTML = "";
-
-      choices.forEach(choice => {
-        const btn = document.createElement("button");
-        btn.textContent = choice;
-        btn.className = "answer-btn";
-        btn.onclick = () => {
-          if (choice === correctWatt) {
-            score++;
-            alert("✅ Bonne réponse !");
-          } else {
-            alert(`❌ Mauvaise réponse ! La bonne était : ${correctWatt}`);
-          }
-          document.getElementById("score").textContent = `Score : ${score}`;
-          generateQuestion();
-        };
-        answersContainer.appendChild(btn);
-      });
+      if (!freeMode) {
+        const options = [currentQuestion.watt];
+        while (options.length < 4) {
+          const choice = questions[Math.floor(Math.random() * questions.length)].watt;
+          if (!options.includes(choice)) options.push(choice);
+        }
+        shuffle(options).forEach(w => {
+          const btn = document.createElement("button");
+          btn.textContent = w;
+          btn.className = "answer-btn";
+          btn.onclick = () => checkAnswer(w);
+          answersEl.appendChild(btn);
+        });
+      }
     }
 
-    window.onload = () => {
-      generateQuestion();
-    };
+    function checkAnswer(answer) {
+      const isCorrect = answer.toLowerCase().trim() === currentQuestion.watt.toLowerCase().trim();
+      feedbackEl.textContent = isCorrect ? "✅ Bonne réponse !" : `❌ Mauvais. Réponse attendue : ${currentQuestion.watt}`;
+      if (isCorrect) score++;
+      total++;
+      scoreEl.textContent = `Score : ${score}/${total}`;
+      setTimeout(loadQuestion, 2000);
+    }
+
+    submitBtn.addEventListener("click", () => {
+      checkAnswer(textAnswer.value);
+      textAnswer.value = "";
+    });
+
+    loadQuestion();
   </script>
+</body>
+</html>
 
 </body>
 </html>

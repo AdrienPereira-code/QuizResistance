@@ -2,136 +2,135 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Quiz Résistances Cigarette Électronique</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Vape - Résistances</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f0f2f5;
-      padding: 40px;
-    }
-    .quiz-container {
-      background: white;
-      max-width: 600px;
-      margin: auto;
+      background-color: #f4f4f4;
+      color: #333;
+      text-align: center;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h2 {
-      margin-bottom: 20px;
+    h1 {
+      color: #4CAF50;
     }
-    button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 12px;
-      font-size: 16px;
+    .question {
+      margin: 20px 0;
+      font-size: 18px;
+    }
+    .answer-btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
       border: none;
-      border-radius: 8px;
-      background: #e0e0e0;
+      border-radius: 5px;
       cursor: pointer;
-      transition: background 0.3s;
     }
-    button:hover {
-      background: #d0d0d0;
+    .answer-btn:hover {
+      background-color: #0056b3;
     }
-    .correct {
-      background-color: #c8f7c5 !important;
-    }
-    .wrong {
-      background-color: #f7c5c5 !important;
-    }
-    #score {
+    .score {
+      font-size: 18px;
       margin-top: 20px;
-      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <div class="quiz-container">
-    <h2 id="question">Chargement...</h2>
-    <div id="answers"></div>
-    <button onclick="loadQuestion()">Question suivante</button>
-    <p id="score">Score : 0 / 0</p>
-  </div>
+
+  <h1>Quiz Vape - Résistances</h1>
+
+  <div id="question" class="question"></div>
+
+  <div id="answers"></div>
+
+  <div id="score" class="score">Score : 0</div>
 
   <script>
     const questions = [
-      // Voopoo PNPX
-      { ohm: "0,8", watt: "12 à 16 W", brand: "Voopoo - PnP X" },
-      { ohm: "0,6", watt: "18 à 23 W", brand: "Voopoo - PnP X" },
-      { ohm: "0,45", watt: "25 à 32 W", brand: "Voopoo - PnP X" },
-      { ohm: "0,3", watt: "32 à 40 W", brand: "Voopoo - PnP X" },
-      { ohm: "0,2", watt: "40 à 60 W", brand: "Voopoo - PnP X" },
-      { ohm: "0,15", watt: "60 à 80 W", brand: "Voopoo - PnP X" },
-      // Vaporesso GTX
-      { ohm: "0,3", watt: "32 à 45 W", brand: "Vaporesso - GTX" },
-      { ohm: "0,2", watt: "45 à 60 W", brand: "Vaporesso - GTX" },
-      // Vaporesso GTi
-      { ohm: "0,5", watt: "30 à 40 W", brand: "Vaporesso - GTi" },
-      { ohm: "0,4", watt: "50 à 60 W", brand: "Vaporesso - GTi" },
-      { ohm: "0,2", watt: "60 à 75 W", brand: "Vaporesso - GTi" },
-      { ohm: "0,15", watt: "75 à 90 W", brand: "Vaporesso - GTi" },
-      // Geekvape Z Series
-      { ohm: "0,4", watt: "50 à 60 W", brand: "Geekvape - Z Series" },
-      { ohm: "0,15XM", watt: "70 à 85 W", brand: "Geekvape - Z Series" },
-      // Geekvape B Series
-      { ohm: "1,2", watt: "10 à 14 W", brand: "Geekvape - B Series" },
-      { ohm: "0,6", watt: "15 à 25 W", brand: "Geekvape - B Series" },
-      { ohm: "0,4", watt: "25 à 35 W", brand: "Geekvape - B Series" },
-      { ohm: "0,3", watt: "30 à 38 W", brand: "Geekvape - B Series" },
-      { ohm: "0,2", watt: "50 à 58 W", brand: "Geekvape - B Series" },
-      // Lost Vape UB Max
-      { ohm: "0,3", watt: "40 à 60 W", brand: "Lost Vape - UB Max" },
-      { ohm: "0,2", watt: "60 à 80 W", brand: "Lost Vape - UB Max" },
-      { ohm: "0,15", watt: "80 à 120 W", brand: "Lost Vape - UB Max" },
-      // Aspire BP
-      { ohm: "0,6", watt: "15 à 25 W", brand: "Aspire - BP" },
-      { ohm: "0,3", watt: "30 à 40 W", brand: "Aspire - BP" },
-      { ohm: "0,17", watt: "45 à 55 W", brand: "Aspire - BP" },
-      { ohm: "0,15", watt: "60 à 80 W", brand: "Aspire - BP" },
-      { ohm: "0,15 pro", watt: "80 à 100 W", brand: "Aspire - BP" },
+      { brand: "Voopoo PNPX", ohm: "0.8", watt: "12 à 16 watts" },
+      { brand: "Voopoo PNPX", ohm: "0.6", watt: "18 à 23 watts" },
+      { brand: "Voopoo PNPX", ohm: "0.45", watt: "25 à 32 watts" },
+      { brand: "Voopoo PNPX", ohm: "0.3", watt: "32 à 40 watts" },
+      { brand: "Voopoo PNPX", ohm: "0.2", watt: "40 à 60 watts" },
+      { brand: "Voopoo PNPX", ohm: "0.15", watt: "60 à 80 watts" },
+      { brand: "Vaporesso GTX", ohm: "0.3", watt: "32 à 45 watts" },
+      { brand: "Vaporesso GTX", ohm: "0.2", watt: "45 à 60 watts" },
+      { brand: "Vaporesso GTi", ohm: "0.5", watt: "30 à 40 watts" },
+      { brand: "Vaporesso GTi", ohm: "0.4", watt: "50 à 60 watts" },
+      { brand: "Vaporesso GTi", ohm: "0.2", watt: "60 à 75 watts" },
+      { brand: "Vaporesso GTi", ohm: "0.15", watt: "75 à 90 watts" },
+      { brand: "Geekvape Z", ohm: "0.4", watt: "50 à 60 watts" },
+      { brand: "Geekvape Z", ohm: "0.15XM", watt: "70 à 85 watts" },
+      { brand: "Geekvape B", ohm: "1.2", watt: "10 à 14 watts" },
+      { brand: "Geekvape B", ohm: "0.6", watt: "15 à 25 watts" },
+      { brand: "Geekvape B", ohm: "0.4", watt: "25 à 35 watts" },
+      { brand: "Geekvape B", ohm: "0.3", watt: "30 à 38 watts" },
+      { brand: "Geekvape B", ohm: "0.2", watt: "50 à 58 watts" },
+      { brand: "Lost Vape UB Max", ohm: "0.3", watt: "40 à 60 watts" },
+      { brand: "Lost Vape UB Max", ohm: "0.2", watt: "60 à 80 watts" },
+      { brand: "Lost Vape UB Max", ohm: "0.15", watt: "80 à 120 watts" },
+      { brand: "Aspire BP", ohm: "0.6", watt: "15 à 25 watts" },
+      { brand: "Aspire BP", ohm: "0.3", watt: "30 à 40 watts" },
+      { brand: "Aspire BP", ohm: "0.17", watt: "45 à 55 watts" },
+      { brand: "Aspire BP", ohm: "0.15", watt: "60 à 80 watts" },
+      { brand: "Aspire BP", ohm: "0.15 pro", watt: "80 à 100 watts" },
     ];
 
     let score = 0;
-    let total = 0;
 
-    function shuffle(arr) {
-      return [...arr].sort(() => Math.random() - 0.5);
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
     }
 
-    function loadQuestion() {
-      const current = questions[Math.floor(Math.random() * questions.length)];
-      const wrongs = shuffle(questions.filter(q => q !== current)).slice(0, 3);
-      const options = shuffle([current, ...wrongs]);
+    function generateQuestion() {
+      const question = questions[Math.floor(Math.random() * questions.length)];
+      const correctWatt = question.watt;
 
-      document.getElementById("question").textContent = `Quelle est la plage de puissance recommandée pour la résistance ${current.ohm} ohm (${current.brand}) ?`;
-      const answersDiv = document.getElementById("answers");
-      answersDiv.innerHTML = "";
+      // Créer des réponses uniques
+      const incorrectWattages = shuffle(
+        questions
+          .filter(q => q.watt !== correctWatt)
+          .map(q => q.watt)
+          .filter((value, index, self) => self.indexOf(value) === index)
+      ).slice(0, 3);
 
-      options.forEach(option => {
+      const choices = shuffle([correctWatt, ...incorrectWattages]);
+
+      // Affichage
+      document.getElementById("question").innerHTML = `
+        <strong>Marque :</strong> ${question.brand}<br>
+        <strong>Résistance :</strong> ${question.ohm} ohm<br>
+        Quelle est la bonne plage de puissance ?
+      `;
+
+      const answersContainer = document.getElementById("answers");
+      answersContainer.innerHTML = "";
+
+      choices.forEach(choice => {
         const btn = document.createElement("button");
-        btn.textContent = option.watt;
+        btn.textContent = choice;
+        btn.className = "answer-btn";
         btn.onclick = () => {
-          total++;
-          if (option === current) {
-            btn.classList.add("correct");
+          if (choice === correctWatt) {
             score++;
+            alert("✅ Bonne réponse !");
           } else {
-            btn.classList.add("wrong");
+            alert(`❌ Mauvaise réponse ! La bonne était : ${correctWatt}`);
           }
-          document.querySelectorAll("#answers button").forEach(b => b.disabled = true);
-          updateScore();
+          document.getElementById("score").textContent = `Score : ${score}`;
+          generateQuestion();
         };
-        answersDiv.appendChild(btn);
+        answersContainer.appendChild(btn);
       });
     }
 
-    function updateScore() {
-      document.getElementById("score").textContent = `Score : ${score} / ${total}`;
-    }
-
-    loadQuestion();
+    window.onload = () => {
+      generateQuestion();
+    };
   </script>
+
 </body>
 </html>

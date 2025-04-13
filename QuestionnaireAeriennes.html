@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Résistances Cigarette Électronique</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      padding: 40px;
+    }
+    .quiz-container {
+      background: white;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #e0e0e0;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #d0d0d0;
+    }
+    .correct {
+      background-color: #c8f7c5 !important;
+    }
+    .wrong {
+      background-color: #f7c5c5 !important;
+    }
+    #score {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h2 id="question">Chargement...</h2>
+    <div id="answers"></div>
+    <button onclick="loadQuestion()">Question suivante</button>
+    <p id="score">Score : 0 / 0</p>
+  </div>
+
+  <script>
+    const questions = [
+      // Voopoo PNPX
+      { ohm: "0,8", watt: "12 à 16 W", brand: "Voopoo - PnP X" },
+      { ohm: "0,6", watt: "18 à 23 W", brand: "Voopoo - PnP X" },
+      { ohm: "0,45", watt: "25 à 32 W", brand: "Voopoo - PnP X" },
+      { ohm: "0,3", watt: "32 à 40 W", brand: "Voopoo - PnP X" },
+      { ohm: "0,2", watt: "40 à 60 W", brand: "Voopoo - PnP X" },
+      { ohm: "0,15", watt: "60 à 80 W", brand: "Voopoo - PnP X" },
+      // Vaporesso GTX
+      { ohm: "0,3", watt: "32 à 45 W", brand: "Vaporesso - GTX" },
+      { ohm: "0,2", watt: "45 à 60 W", brand: "Vaporesso - GTX" },
+      // Vaporesso GTi
+      { ohm: "0,5", watt: "30 à 40 W", brand: "Vaporesso - GTi" },
+      { ohm: "0,4", watt: "50 à 60 W", brand: "Vaporesso - GTi" },
+      { ohm: "0,2", watt: "60 à 75 W", brand: "Vaporesso - GTi" },
+      { ohm: "0,15", watt: "75 à 90 W", brand: "Vaporesso - GTi" },
+      // Geekvape Z Series
+      { ohm: "0,4", watt: "50 à 60 W", brand: "Geekvape - Z Series" },
+      { ohm: "0,15XM", watt: "80 à 90 W", brand: "Geekvape - Z Series" },
+      // Geekvape B Series
+      { ohm: "1,2", watt: "10 à 14 W", brand: "Geekvape - B Series" },
+      { ohm: "0,6", watt: "15 à 25 W", brand: "Geekvape - B Series" },
+      { ohm: "0,4", watt: "25 à 35 W", brand: "Geekvape - B Series" },
+      { ohm: "0,3", watt: "30 à 38 W", brand: "Geekvape - B Series" },
+      { ohm: "0,2", watt: "50 à 58 W", brand: "Geekvape - B Series" },
+      // Lost Vape UB Max
+      { ohm: "0,3", watt: "40 à 60 W", brand: "Lost Vape - UB Max" },
+      { ohm: "0,2", watt: "60 à 80 W", brand: "Lost Vape - UB Max" },
+      { ohm: "0,15", watt: "80 à 120 W", brand: "Lost Vape - UB Max" },
+      // Aspire BP
+      { ohm: "0,6", watt: "15 à 25 W", brand: "Aspire - BP" },
+      { ohm: "0,3", watt: "30 à 40 W", brand: "Aspire - BP" },
+      { ohm: "0,17", watt: "45 à 55 W", brand: "Aspire - BP" },
+      { ohm: "0,15", watt: "60 à 80 W", brand: "Aspire - BP" },
+      { ohm: "0,15 pro", watt: "80 à 100 W", brand: "Aspire - BP" },
+    ];
+
+    let score = 0;
+    let total = 0;
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function loadQuestion() {
+      const current = questions[Math.floor(Math.random() * questions.length)];
+      const wrongs = shuffle(questions.filter(q => q !== current)).slice(0, 3);
+      const options = shuffle([current, ...wrongs]);
+
+      document.getElementById("question").textContent = `Quelle est la plage de puissance recommandée pour la résistance ${current.ohm} ohm (${current.brand}) ?`;
+      const answersDiv = document.getElementById("answers");
+      answersDiv.innerHTML = "";
+
+      options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.textContent = option.watt;
+        btn.onclick = () => {
+          total++;
+          if (option === current) {
+            btn.classList.add("correct");
+            score++;
+          } else {
+            btn.classList.add("wrong");
+          }
+          document.querySelectorAll("#answers button").forEach(b => b.disabled = true);
+          updateScore();
+        };
+        answersDiv.appendChild(btn);
+      });
+    }
+
+    function updateScore() {
+      document.getElementById("score").textContent = `Score : ${score} / ${total}`;
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
